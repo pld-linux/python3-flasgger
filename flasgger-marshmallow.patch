@@ -1,0 +1,54 @@
+--- flasgger-0.9.7.1/examples/marshmallow_apispec.py.orig	2020-12-23 10:11:59.000000000 +0100
++++ flasgger-0.9.7.1/examples/marshmallow_apispec.py	2025-12-25 20:58:24.567892832 +0100
+@@ -4,6 +4,7 @@ Another example using Marshmallow schema
+ # coding: utf-8
+ 
+ from flask import Flask, jsonify, request
++from marshmallow import validate
+ 
+ from flasgger import Schema, Swagger, SwaggerView, fields
+ 
+@@ -18,7 +19,7 @@ swag = Swagger(app)
+ 
+ class User(Schema):
+     username = fields.Str(required=True)
+-    age = fields.Int(required=True, min=18)
++    age = fields.Int(required=True, validate=validate.Range(min=18))
+     tags = fields.List(fields.Str())
+ 
+ 
+--- flasgger-0.9.7.1/examples/swag_annotation.py.orig	2023-05-10 20:08:22.000000000 +0200
++++ flasgger-0.9.7.1/examples/swag_annotation.py	2025-12-26 19:50:53.781768847 +0100
+@@ -12,7 +12,7 @@ swag = {"swag": True,
+ 
+ 
+ class Body(Schema):
+-    color = fields.List(fields.String(), required=True, validate=Length(max=5), example=["white", "blue", "red"])
++    color = fields.List(fields.String(), required=True, validate=Length(max=5), metadata={"example": ["white", "blue", "red"]})
+ 
+     def swag_validation_function(self, data, main_def):
+         self.load(data)
+--- flasgger-0.9.7.1/examples/validation.py.orig	2023-05-05 18:18:04.000000000 +0200
++++ flasgger-0.9.7.1/examples/validation.py	2025-12-26 21:55:23.001304611 +0100
+@@ -16,6 +16,7 @@ from flasgger import fields
+ from flasgger import swag_from
+ from flasgger import validate
+ from flasgger import utils
++from marshmallow.validate import Range
+ 
+ # Examples include intentionally invalid defaults to demonstrate validation.
+ _TEST_META_SKIP_FULL_VALIDATION = True
+@@ -146,10 +147,10 @@ def autovalidation_from_spec_dict():
+ 
+ 
+ class User(Schema):
+-    username = fields.Str(required=True, default="Sirius Black")
++    username = fields.Str(required=True, dump_default="Sirius Black")
+     # wrong default "180" to force validation error
+-    age = fields.Int(required=True, min=18, default="180")
+-    tags = fields.List(fields.Str(), default=["wizard", "hogwarts", "dead"])
++    age = fields.Int(required=True, validate=Range(min=18), dump_default="180")
++    tags = fields.List(fields.Str(), dump_default=["wizard", "hogwarts", "dead"])
+ 
+ 
+ class UserPostView(SwaggerView):

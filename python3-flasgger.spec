@@ -63,7 +63,7 @@ interakcje z zasobami swojego API.
 # test_example.py requires readable resolv.conf to collect
 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 \
 PYTHONPATH=$(pwd):$(pwd)/etc/flasgger_package \
-%{__python3} -m pytest tests --ignore tests/test_example.py
+%{__python3} -m pytest tests --ignore tests/test_examples.py
 %endif
 
 %install
